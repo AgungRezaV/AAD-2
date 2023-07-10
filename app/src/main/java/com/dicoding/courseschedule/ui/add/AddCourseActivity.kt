@@ -22,6 +22,7 @@ class AddCourseActivity : AppCompatActivity(), TimePickerFragment.DialogTimeList
     private lateinit var edLecturer: TextInputEditText
     private lateinit var edNote: TextInputEditText
     private lateinit var spDay: Spinner
+
     private var startTime = "00:00"
     private var endTime = "00:00"
 
@@ -43,6 +44,7 @@ class AddCourseActivity : AppCompatActivity(), TimePickerFragment.DialogTimeList
             val dialogFragment = TimePickerFragment()
             dialogFragment.show(supportFragmentManager, "startTime")
         }
+
         findViewById<ImageButton>(R.id.ib_end_time).setOnClickListener {
             val dialogFragment = TimePickerFragment()
             dialogFragment.show(supportFragmentManager, "endTime")
@@ -61,11 +63,11 @@ class AddCourseActivity : AppCompatActivity(), TimePickerFragment.DialogTimeList
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_insert -> {
-                val crouseName = edCourseName.text.toString()
+                val courseName = edCourseName.text.toString()
                 val lecturer = edLecturer.text.toString()
                 val note = edNote.text.toString()
                 val day = spDay.selectedItemPosition
-                viewModel.insertCourse(crouseName, day, startTime, endTime, lecturer, note)
+                viewModel.insertCourse(courseName, day, startTime, endTime, lecturer, note)
                 true
             }
             android.R.id.home -> {

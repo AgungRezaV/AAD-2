@@ -80,8 +80,9 @@ class HomeActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val intent: Intent = when (item.itemId) {
             R.id.action_add -> Intent(this, AddCourseActivity::class.java)
-            R.id.action_settings -> Intent(this, SettingsActivity::class.java)
             R.id.action_list -> Intent(this, ListActivity::class.java)
+            R.id.action_settings -> Intent(this, SettingsActivity::class.java)
+
             else -> null
         } ?: return super.onOptionsItemSelected(item)
 

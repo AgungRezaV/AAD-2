@@ -37,28 +37,26 @@ class DailyReminder : BroadcastReceiver() {
 
     //TODO 12 : Implement daily reminder for every 06.00 a.m using AlarmManager
     fun setDailyReminder(context: Context) {
+        val time = "06:00"
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, DailyReminder::class.java)
 
+        // schedule daily alarm
+        val timeArray = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val calendar = Calendar.getInstance()
-            .apply {
-                set(Calendar.HOUR_OF_DAY, 6)
-                set(Calendar.MINUTE, 0)
-                set(Calendar.SECOND, 0)
-            }
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]))
+        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]))
+        calendar.set(Calendar.SECOND, 0)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             ID_REPEATING,
             intent,
-            0
+            PendingIntent.FLAG_IMMUTABLE
         )
-        alarmManager.setInexactRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
-            pendingIntent
-        )
+
+        // atur interval alarm adalah per hari
+        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
     }
 
     fun cancelAlarm(context: Context) {
@@ -68,9 +66,9 @@ class DailyReminder : BroadcastReceiver() {
             context,
             ID_REPEATING,
             intent,
-            0
+            PendingIntent.FLAG_IMMUTABLE
         )
-        pendingIntent.cancel()
+
         alarmManager.cancel(pendingIntent)
     }
 
@@ -83,7 +81,7 @@ class DailyReminder : BroadcastReceiver() {
             notificationStyle.addLine(courseData)
         }
 
-        val notificationManagerCompat =
+        val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -92,9 +90,9 @@ class DailyReminder : BroadcastReceiver() {
             .setContentTitle(context.getString(R.string.today_schedule))
             .setContentText(context.getString(R.string.notification_message_format))
             .setColor(ContextCompat.getColor(context, android.R.color.transparent))
-            .setVibrate(longArrayOf(1000, 1000, 1000, 1000, 1000))
             .setStyle(notificationStyle)
             .setSound(alarmSound)
+            .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
@@ -103,10 +101,8 @@ class DailyReminder : BroadcastReceiver() {
                 NotificationManager.IMPORTANCE_DEFAULT
             )
 
-            channel.enableVibration(true)
-            channel.vibrationPattern = longArrayOf(1000, 1000, 1000, 1000, 1000)
             builder.setChannelId(NOTIFICATION_CHANNEL_ID)
-            notificationManagerCompat.createNotificationChannel(channel)
+            notificationManager.createNotificationChannel(channel)
         }
 
         val notificationIntent = Intent(context, HomeActivity::class.java)
@@ -114,12 +110,10 @@ class DailyReminder : BroadcastReceiver() {
                 or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         val intent = PendingIntent.getActivity(
             context, 0,
-            notificationIntent, 0
+            notificationIntent, PendingIntent.FLAG_IMMUTABLE
         )
-        builder.setAutoCancel(true)
         builder.setContentIntent(intent)
 
-        val notification = builder.build()
-        notificationManagerCompat.notify(NOTIFICATION_ID, notification)
+        notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
 }

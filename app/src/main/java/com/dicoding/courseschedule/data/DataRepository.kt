@@ -2,7 +2,6 @@ package com.dicoding.courseschedule.data
 
 import android.content.Context
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.dicoding.courseschedule.util.QueryType
@@ -16,7 +15,7 @@ import java.util.Calendar
 class DataRepository(private val dao: CourseDao) {
 
     fun getNearestSchedule(queryType: QueryType) : LiveData<Course?> {
-        return dao.getNearestSchedule(QueryUtil.nearestQuery(queryType))
+        return dao.getNearestSchedule(nearestQuery(queryType))
     }
 
     fun getAllCourse(sortType: SortType): LiveData<PagedList<Course>> {
