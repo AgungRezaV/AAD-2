@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import com.dicoding.courseschedule.data.DataCourseName.COL_COURSE_NAME
 import com.dicoding.courseschedule.data.DataCourseName.COL_DAY
 import com.dicoding.courseschedule.data.DataCourseName.COL_END_TIME
+import com.dicoding.courseschedule.data.DataCourseName.COL_ID
 import com.dicoding.courseschedule.data.DataCourseName.COL_LECTURER
 import com.dicoding.courseschedule.data.DataCourseName.COL_NOTE
 import com.dicoding.courseschedule.data.DataCourseName.COL_START_TIME
@@ -15,6 +16,7 @@ import com.dicoding.courseschedule.data.DataCourseName.TABLE_NAME
 @Entity(tableName = TABLE_NAME)
 data class Course(
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = COL_ID)
     val id: Int = 0,
     @ColumnInfo(name = COL_COURSE_NAME)
     val courseName: String,

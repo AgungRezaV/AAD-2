@@ -37,26 +37,28 @@ class DailyReminder : BroadcastReceiver() {
 
     //TODO 12 : Implement daily reminder for every 06.00 a.m using AlarmManager
     fun setDailyReminder(context: Context) {
-        val time = "06:00"
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, DailyReminder::class.java)
 
-        // schedule daily alarm
-        val timeArray = time.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
         val calendar = Calendar.getInstance()
-        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]))
-        calendar.set(Calendar.MINUTE, Integer.parseInt(timeArray[1]))
+        calendar.set(Calendar.HOUR_OF_DAY, 6)
+        calendar.set(Calendar.MINUTE, 0)
         calendar.set(Calendar.SECOND, 0)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             ID_REPEATING,
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
-        // atur interval alarm adalah per hari
-        alarmManager.setInexactRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+        //Interval alarm per hari
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
     }
 
     fun cancelAlarm(context: Context) {
@@ -81,38 +83,35 @@ class DailyReminder : BroadcastReceiver() {
             notificationStyle.addLine(courseData)
         }
 
+        val notificationIntent = Intent(context, HomeActivity::class.java)
+
+        val pendingIntent = PendingIntent.getActivity(
+            context, 0,
+            notificationIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+
         val notificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-        val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notifications)
-            .setContentTitle(context.getString(R.string.today_schedule))
-            .setContentText(context.getString(R.string.notification_message_format))
-            .setColor(ContextCompat.getColor(context, android.R.color.transparent))
-            .setStyle(notificationStyle)
-            .setSound(alarmSound)
-            .setAutoCancel(true)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channel = NotificationChannel(
                 NOTIFICATION_CHANNEL_ID,
                 NOTIFICATION_CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
+                NotificationManager.IMPORTANCE_HIGH
             )
 
-            builder.setChannelId(NOTIFICATION_CHANNEL_ID)
             notificationManager.createNotificationChannel(channel)
         }
 
-        val notificationIntent = Intent(context, HomeActivity::class.java)
-        notificationIntent.flags = (Intent.FLAG_ACTIVITY_CLEAR_TOP
-                or Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val intent = PendingIntent.getActivity(
-            context, 0,
-            notificationIntent, PendingIntent.FLAG_IMMUTABLE
-        )
-        builder.setContentIntent(intent)
+        val alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+        val builder = NotificationCompat.Builder(context, NOTIFICATION_CHANNEL_ID)
+            .setSmallIcon(R.drawable.ic_notifications)
+            .setContentTitle(context.getString(R.string.today_schedule))
+            .setContentIntent(pendingIntent)
+            .setColor(ContextCompat.getColor(context, android.R.color.transparent))
+            .setStyle(notificationStyle)
+            .setSound(alarmSound)
+            .setAutoCancel(true)
 
         notificationManager.notify(NOTIFICATION_ID, builder.build())
     }
