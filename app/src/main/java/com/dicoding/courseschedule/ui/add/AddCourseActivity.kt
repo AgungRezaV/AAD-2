@@ -13,6 +13,7 @@ import com.dicoding.courseschedule.util.TimePickerFragment
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
 
 class AddCourseActivity : AppCompatActivity(), TimePickerFragment.DialogTimeListener {
 
@@ -85,7 +86,7 @@ class AddCourseActivity : AppCompatActivity(), TimePickerFragment.DialogTimeList
                 set(Calendar.MINUTE, minute)
             }
 
-        val formatter = SimpleDateFormat("HH:mm")
+        val formatter = SimpleDateFormat("HH:mm", Locale.getDefault())
         val formattedDate = formatter.format(calendar.time)
 
         when (tag) {
