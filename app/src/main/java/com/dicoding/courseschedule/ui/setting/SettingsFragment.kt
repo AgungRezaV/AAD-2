@@ -18,7 +18,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         //TODO 10 : Update theme based on value in ListPreference
         switchTheme()
         //TODO 11 : Schedule and cancel notification in DailyReminder based on SwitchPreference
-        notificationManager()
+        alarmManager()
     }
 
     private fun updateTheme(nightMode: Int): Boolean {
@@ -37,7 +37,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    private fun notificationManager(){
+    private fun alarmManager(){
         val dailyReminder = DailyReminder()
         val prefNotification = findPreference<SwitchPreference>(getString(R.string.pref_key_notify))
         prefNotification?.setOnPreferenceChangeListener { _, newValue ->
