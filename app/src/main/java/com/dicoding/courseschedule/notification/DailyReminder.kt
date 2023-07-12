@@ -53,7 +53,7 @@ class DailyReminder : BroadcastReceiver() {
         )
 
         //Interval alarm per hari
-        alarmManager.setRepeating(
+        alarmManager.setInexactRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             AlarmManager.INTERVAL_DAY,
